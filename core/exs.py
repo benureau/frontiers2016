@@ -95,7 +95,8 @@ for mb in [1, 10, 20, 25, 50, 100, 200, 250, 300, 400, 500, 1000, 4000, 4500, 47
     catalog['rmb{}.rgb.plwlr'.format(mb)] = ex_e
 
 catalog['random.goal'] = catalog['rmb10.rgb.p0.05']
-
+for mb in [1, 10, 20, 25, 50, 100, 200, 250, 300, 400, 500, 1000, 4000, 4500, 4750, 4900, 24000, 24500, 49000]:
+    catalog['random.goal_{}'.format(mb)] = catalog['rmb{}.rgb.p0.05'.format(mb)]
 
 # Reuse Goals
 
