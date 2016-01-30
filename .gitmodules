@@ -1,0 +1,18 @@
+[submodule "submodules/clusterjobs"]
+	path = submodules/clusterjobs
+	url = https://github.com/humm/clusterjobs
+[submodule "submodules/scicfg"]
+	path = submodules/scicfg
+	url = https://github.com/humm/scicfg
+[submodule "submodules/environments"]
+	path = submodules/environments
+	url = https://github.com/humm/environments
+[submodule "submodules/learners"]
+	path = submodules/learners
+	url = https://github.com/humm/learners
+[submodule "submodules/explorers"]
+	path = submodules/explorers
+	url = https://github.com/humm/explorers
+[submodule "submodules/experiments"]
+	path = submodules/experiments
+	url = https://github.com/humm/experiments
