@@ -10,11 +10,11 @@ import exp_cfgs
 from exp_factory import make_exp, list_exp
 
 
-def planar():
+def planar(path='frontiers/planar_arms', rep=100):
     cfg = exp_cfgs.planar_cfg._deepcopy()
-    nor_diff = {'exp.path'         : 'frontiers2015/kin_reuse',
+    nor_diff = {'exp.path'         : path,
                 'exp.prefix'       : ('kin_reuse',),
-                'exp.repetitions'  : 100,
+                'exp.repetitions'  : rep,
                 'meta.run_tests'   : True}
 
     src_diff = nor_diff
