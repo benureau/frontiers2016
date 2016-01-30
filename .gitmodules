@@ -16,3 +16,6 @@
 [submodule "submodules/experiments"]
 	path = submodules/experiments
 	url = https://github.com/humm/experiments
+[submodule "submodules/fastlearners"]
+	path = submodules/fastlearners
+	url = https://github.com/humm/fastlearners

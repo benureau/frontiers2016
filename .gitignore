@@ -1,3 +1,4 @@
+*.ignore/
 htmls/
 .ipynb_checkpoints/
 
