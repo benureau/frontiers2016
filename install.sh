@@ -1,47 +1,28 @@
-# upgrading pip
-pip install -U pip
-
-# initializing submodules
-git submodule init
-git submodule update
+#!/usr/bin/env python
+import subprocess
 
 
-# installing submodules and requirements
-cd submodules
+cmds = [  # upgrading pip
+        ('pip install -U pip', None),
+        #   # initializing submodules
+        #('git submodule init', None),
+        #('git submodule update', None),
+        #   # installing third-party libraries
+        ('pip install -r requirements.txt', './submodules'),
+       ]
 
-pip install -r requirements.txt
+  # installing submodules
+for pkg in ['scicfg', 'clusterjobs',
+            'environments', 'fastlearners', 'learners', 'explorers',
+            'experiments']:
 
-cd scicfg
-pip uninstall scicfg -y
-pip install .
-cd ..
+    cwd = './submodules/{}'.format(pkg)
+    #cmd = 'git describe --tags --dirty --always --long'
+    cmd = 'pip uninstall {} -y; pip install -e .'.format(pkg)
+    cmds.append((cmd, cwd))
 
-cd clusterjobs
-pip uninstall clusterjobs -y
-pip install .
-cd ..
 
-cd environments
-pip uninstall environments -y
-pip install .
-cd ..
-
-cd fastlearners
-pip uninstall fastlearners -y
-pip install .
-cd ..
-
-cd learners
-pip uninstall learners -y
-pip install .
-cd ..
-
-cd explorers
-pip uninstall explorers -y
-pip install .
-cd ..
-
-cd experiments
-pip uninstall experiments -y
-pip install .
-cd ..
+if __name__ == '__main__':
+    for cmd, cwd in cmds:
+        print(cmd, cwd)
+        p = subprocess.check_call(cmd, shell=True, cwd=cwd, stderr=subprocess.STDOUT)
