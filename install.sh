@@ -5,8 +5,8 @@ import subprocess
 cmds = [  # upgrading pip
         ('pip install -U pip', None),
         #   # initializing submodules
-        #('git submodule init', None),
-        #('git submodule update', None),
+        ('git submodule init', None),
+        ('git submodule update', None),
         #   # installing third-party libraries
         ('pip install -r requirements.txt', './submodules'),
        ]
