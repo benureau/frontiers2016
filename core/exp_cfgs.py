@@ -16,9 +16,8 @@ base_cfg = experiments.desc._deepcopy()
 base_cfg._update(paths.cfg)
 
 base_cfg.provenance.package_names = ('experiments', 'clusterjobs', 'scicfg',
-                                    'learners', 'fastlearners', 'explorers', 'environments',
-                                    'scipy', 'numpy',
-                                    'dovecot')
+                                     'learners', 'fastlearners', 'explorers', 'environments',
+                                     'scipy', 'numpy', 'sklearn')
 base_cfg.provenance.code._branch('frontiers2015', strict=False)
 
 base_cfg.provenance.code.frontiers2015.commit = experiments.provenance.git_commit(GIT_DIR)
