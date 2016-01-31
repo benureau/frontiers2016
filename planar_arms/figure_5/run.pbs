@@ -7,4 +7,8 @@
 #PBS -e $configfile.err
 #PBS -o $configfile.out
 
+# replace "frontiers2015" by your pyenv's virtual environment name.
+# if you do not have pyenv, python version will be unchanged.
+export PYENV_VERSION=frontiers2015
 python -c "import experiments; experiments.run_job()" $configfile
+unset PYENV_VERSION
