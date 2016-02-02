@@ -19,3 +19,6 @@
 [submodule "submodules/fastlearners"]
 	path = submodules/fastlearners
 	url = https://github.com/humm/fastlearners
+[submodule "submodules/dovecot"]
+	path = submodules/dovecot
+	url = https://github.com/humm/dovecot
