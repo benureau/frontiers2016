@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import shapely
+import shapely.speedups
 
 from environments import tools
 import learners
@@ -15,6 +16,9 @@ import gfx
 from random_seeds import src_seeds, tgt_seeds
 seeds = src_seeds
 
+
+if shapely.speedups.available:
+    shapely.speedups.enable()
 
 def dist(p1, p2):
     return math.sqrt(sum((p1i-p2i)**2 for p1i, p2i in zip(p1, p2)))
