@@ -1,9 +1,14 @@
 # although they should not, these packages could have an impact on the simulation results
+cython==0.23.4
 numpy==1.10.4
 scipy==0.17.0
 scikit-learn==0.17
 shapely==1.5.13
 
 # these are unlikely to have impact on the simulation results
+# you should relax the version constraints if necessary
+jupyter==1.0.0
+bokeh==0.11.0
 six==1.10.0
 gitpython==1.0.1
+pyprind==2.9.3
