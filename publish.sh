@@ -9,15 +9,16 @@ def publish(filepath):
     _, filename = os.path.split(filepath)
     name, ext = os.path.splitext(filename)
     if ext == '.ipynb':
-        cmd = ('jupyter-nbconvert --to html '
+        cmd = ('jupyter-nbconvert --to notebook '
                '--ClearOutputPreprocessor.enabled=True '
                '--execute '
-               '{} --out htmls/{}.html')
-        subprocess.check_call(cmd.format(filepath, name).split())
+               '{} --out htmls/{}')
+        subprocess.check_call(cmd.format(filepath, filename).split())
 
-        cmd = ('jupyter-nbconvert --to notebook '
-               '--ClearOutputPreprocessor.enabled=True {} --out {}')
-        subprocess.check_call(cmd.format(filepath, filepath).split())
+        cmd = ('jupyter-nbconvert --to html '
+               'htmls/{} --out htmls/{}.html')
+        subprocess.check_call(cmd.format(filename, name).split())
+
 
 def publish_folder(path):
     for dirpath, dirnames, filenames in os.walk(path):
