@@ -12,6 +12,7 @@ import numpy as np
 import bokeh
 from bokeh import plotting
 from bokeh.core.properties import value
+from bokeh.models import FixedTicker
 
 try:
     import shapely
@@ -110,17 +111,15 @@ def output_notebook():
     display(Javascript(disable_js))
     return bokeh.io.output_notebook(hide_banner=True)
 
-def hold(flag):
-    return plotting.hold(flag)
-
 def show(figs):
     if isinstance(figs, collections.Iterable):
         if isinstance(figs[0], collections.Iterable):
-            return bokeh.io.show(bokeh.io.gridplot(figs))
+            bokeh.io.show(bokeh.io.gridplot(figs))
         else:
             assert False, "Simple list of figures are not supported"
-            return bokeh.io.show(bokeh.io.hplot(*figs)) # should, but does not work.
-    return bokeh.io.show(figs)
+            bokeh.io.show(bokeh.io.hplot(*figs)) # should, but does not work.
+    else:
+        bokeh.io.show(figs)
 
 def gridplot(figs):
     return bokeh.io.gridplot(figs)
@@ -130,6 +129,49 @@ def hplot(figs):
 
 def vplot(figs):
     return bokeh.io.vplot(*figs)
+
+
+    ## figure defaults
+
+def prepare_fig(fig, grid=False, tight=True, **kwargs):
+    if fig is None:
+        if 'tools' not in kwargs:
+            kwargs['tools'] = TOOLS
+        if 'title_text_font_size' not in kwargs:
+            kwargs['title_text_font_size'] = value('6pt')
+
+        fig = plotting.figure(**kwargs)
+        three_ticks(fig)
+        disable_minor_ticks(fig)
+        if tight:
+            tight_layout(fig)
+        if not grid:
+            disable_grid(fig)
+
+    return fig
+
+def tight_layout(fig):
+    fig.min_border_top    = 35
+    fig.min_border_bottom = 35
+    fig.min_border_right  = 35
+    fig.min_border_left   = 35
+
+def three_ticks(fig):
+    x_min, x_max = fig.x_range.start, fig.x_range.end
+    y_min, y_max = fig.x_range.start, fig.x_range.end
+    fig.xaxis[0].ticker=FixedTicker(ticks=[x_min, (x_min + x_max)/2.0, x_max])
+    fig.yaxis[0].ticker=FixedTicker(ticks=[y_min, (y_min + y_max)/2.0, y_max])
+
+def disable_minor_ticks(fig):
+    fig.axis.major_label_text_font_size = value('8pt')
+    fig.axis.minor_tick_line_color = None
+    fig.axis.major_tick_in = 0
+
+def disable_grid(fig):
+    fig.xgrid.grid_line_color = None
+    fig.ygrid.grid_line_color = None
+
+
 
 
     ## displaying kinematic 2D arm postures
@@ -182,6 +224,9 @@ def choose_m_vectors(m_channels, explorations, n=5):
 
     return m_vectors
 
+
+
+
 #'#91C46C'
 def posture_explorations(kin_env, explorations, **kwargs):
     return posture_signals(kin_env, [e[0]['m_signal'] for e in explorations], **kwargs)
@@ -193,19 +238,13 @@ def posture_signals(kin_env, m_signals, fig=None, plot_height=PLOT_SIZE, plot_wi
                     color='#666666', alpha=1.0, radius_factor=1.0, line_factor=1.0,
                     x_range=[-1.0, 1.0], y_range=[-1.0, 1.0], **kwargs):
 
-    if fig is None:
-        fig = plotting.figure(x_range=x_range, y_range=y_range,
-                              title_text_font_size=value('6pt'), tools=tools,
-                              plot_width=plot_width, plot_height=plot_height, **kwargs)
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
+                      plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     for m_signal in m_signals:
         m_vector = kin_env.flatten_synergies(m_signal)
         posture(kin_env, m_vector, fig=fig, swap_xy=swap_xy, x_T=x_T, y_T=y_T,
                 color=color, alpha=alpha, radius_factor=radius_factor, line_factor=line_factor)
-
-    disable_minor_ticks(fig)
-    if not grid:
-        disable_grid(fig)
 
     return fig
 
@@ -238,9 +277,6 @@ def posture(kin_env, m_vector, fig=None, swap_xy=True, x_T=0.0, y_T=0.0,
             color='#666666', alpha=0.5, radius_factor=1.0, line_factor=1.0, **kwargs):
 
     assert fig is not None
-    # if fig is None:
-    #     fig = bkp.figure(x_range=x_range, y_range=y_range, title=title,
-    #                           title_text_font_size=value('6pt'), **kwargs)
     kwargs.update({'line_color'  : color,
                    'line_alpha'  : alpha,
                    'fill_color'  : color,
@@ -283,13 +319,8 @@ def spread(s_channels, s_vectors=(), s_goals=(), fig=None,
            grid=False, radius_units='screen', font_size='11pt', **kwargs):
 
     x_range, y_range = ranges(s_channels, x_range=x_range, y_range=y_range)
-    if fig is None:
-        fig = plotting.figure(x_range=x_range, y_range=y_range, tools=tools,
-                              title=title, title_text_font_size=value('8pt'),
-                              plot_width=plot_width, plot_height=plot_height, **kwargs)
-        disable_minor_ticks(fig)
-        if not grid:
-             disable_grid(fig)
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
+                      plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     # effects
     try:
@@ -317,7 +348,7 @@ def spread(s_channels, s_vectors=(), s_goals=(), fig=None,
     return fig
 
 
-def coverage(s_channels, threshold, s_vectors=(), fig=None, title_text_font_size=value('6pt'),
+def coverage(s_channels, threshold, s_vectors=(), fig=None,
              title='no title', swap_xy=True, x_range=None, y_range=None, grid=False,
              color=C_COLOR, c_alpha=1.0, alpha=0.5, **kwargs):
 
@@ -330,13 +361,8 @@ def coverage(s_channels, threshold, s_vectors=(), fig=None, title_text_font_size
         x_range, y_range = y_range, x_range
         xv, yv = yv, xv
 
-    if fig is None:
-        fig = plotting.figure(x_range=x_range, y_range=y_range, tools = "pan,box_zoom,reset,save",
-                              title=title, title_text_font_size=title_text_font_size,
-                              **kwargs)
-        disable_minor_ticks(fig)
-        if not grid:
-             disable_grid(fig)
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
+                      plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     fig.circle(xv, yv, radius=threshold,
                fill_color=hexa(color, 0.35), fill_alpha=c_alpha, line_color=None)
@@ -358,7 +384,6 @@ def coverage(s_channels, threshold, s_vectors=(), fig=None, title_text_font_size
     disable_minor_ticks(fig)
     return fig
 
-bokeh_coverage = coverage
 
 def bokeh_nn(s_channels, testset, errors,
              title='no title', swap_xy=True, x_range=None, y_range=None,
@@ -486,28 +511,19 @@ def bokeh_mesh_density(meshgrid, s_vectors=(), s_goals=(), swap_xy=True,
     plotting.hold(False)
 
 
-def disable_minor_ticks(fig):
-    fig.axis.minor_tick_line_color = None
-    fig.axis.major_tick_in = 0
-
-def disable_grid(fig):
-    fig.xgrid.grid_line_color = None
-    fig.ygrid.grid_line_color = None
-
-
 def perf_std(ticks, avgs, stds, **kwargs):
     if stds is not None:
         stds = [(s, s) for s in stds]
     return perf_astd(ticks, avgs, stds, **kwargs)
 
-bokeh_stds = perf_std
 
 
 def perf_astd(ticks, avgs, astds, color=BLUE, fig=None, alpha=1.0, sem=1.0,
               plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT, legend=None, **kwargs):
-    if fig is None:
-        fig = plotting.figure(plot_width=plot_width, plot_height=plot_height,
-                              title_text_font_size=value('6pt'), **kwargs)
+
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
+                      plot_width=plot_width, plot_height=plot_height, **kwargs)
+
     fig.legend.orientation = "bottom_right"
     fig.line(ticks, avgs, color=color, line_alpha=alpha, legend=legend)
 
@@ -523,8 +539,6 @@ def perf_astd(ticks, avgs, astds, color=BLUE, fig=None, alpha=1.0, sem=1.0,
     return fig
     #plotting.hold(False)
 
-bokeh_astds = perf_astd
-
 
 def perf_quantiles(results, color=BLUE, fig=None, alpha=1.0, extremes=(0, 100),
                    plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT, legend=None, max_line=True, **kwargs):
@@ -533,9 +547,9 @@ def perf_quantiles(results, color=BLUE, fig=None, alpha=1.0, extremes=(0, 100),
     for q in (25, 50, 75) + tuple(extremes):
         quantiles[q] = [np.percentile(avgs, q) for avgs in results['tick_avgs']]
 
-    if fig is None:
-        fig = plotting.figure(plot_width=plot_width, plot_height=plot_height,# **kwargs)
-                              title_text_font_size=value('6pt'), **kwargs) #!FIXME: temporary!
+
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
+                  plot_width=plot_width, plot_height=plot_height, **kwargs)
     fig.line(ticks, quantiles[50], color=color, line_alpha=alpha, legend=legend)
 
     xs_patch = list(ticks) + list(reversed(ticks))
@@ -559,9 +573,9 @@ def perf_lines(results, color=BLUE, fig=None, alpha=0.75,
         for line, avg in zip(lines, avgs):
             line.append(avg)
 
-    if fig is None:
-        fig = plotting.figure(plot_width=plot_width, plot_height=plot_height,
-                              title_text_font_size=value('6pt'), **kwargs)
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
+                      plot_width=plot_width, plot_height=plot_height, **kwargs)
+
     for line in results['rep_avgs']:
         fig.line(ticks, line, color=color, line_alpha=alpha, legend=legend)#, line_dash=[3, 3])
 
