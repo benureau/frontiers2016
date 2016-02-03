@@ -2,16 +2,14 @@
 import subprocess
 
 
-cmds = [  # upgrading pip
-        ('pip install -U pip', None),
-        #   # initializing submodules
+cmds = [ # initializing submodules
         ('git submodule init', None),
         ('git submodule update', None),
-        #   # installing third-party libraries
+         # installing third-party libraries
         ('pip install -r requirements.txt', './submodules'),
        ]
 
-  # installing submodules
+# installing submodules
 for pkg in ['scicfg', 'clusterjobs',
             'environments', 'fastlearners', 'learners', 'explorers',
             'experiments']:
