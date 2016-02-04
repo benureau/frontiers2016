@@ -475,42 +475,6 @@ class ColorBar(object):
             raise NotImplementedError
 
 
-def bokeh_mesh_density(meshgrid, s_vectors=(), s_goals=(), swap_xy=True,
-                       mesh_colors=('#DDDDDD', '#BBBBBB', '#999999', '#777777', '#555555'), title='no title',
-                       e_radius=1.0, e_color=E_COLOR, e_alpha=0.75,
-                       g_radius=1.0, g_color=G_COLOR, g_alpha=0.75, x_range=None, y_range=None, **kwargs):
-
-    x_range, y_range = ranges(s_channels, x_range=x_range, y_range=y_range)
-    xm = zip(*[b.bounds[0] for b in meshgrid.nonempty_bins])
-    ym = zip(*[b.bounds[1] for b in meshgrid.nonempty_bins])
-    if swap_xy:
-        x_range, y_range = y_range, x_range
-        xm, ym = ym, xm
-
-    d_max = max(len(b) for b in meshgrid.nonempty_bins)
-    mesh_scale = [1.0+i/(len(mesh_colors)-1)*d_max for i in range(len(mesh_colors))]
-    colorbar = ColorBar(mesh_scale, mesh_colors, continuous=True)
-
-    color = []
-    for b in meshgrid.nonempty_bins:
-        color.append(colorbar.color(len(b)))
-
-    plotting.rect((np.array(xm[1])+np.array(xm[0]))/2   , (np.array(ym[1])+np.array(ym[0]))/2,
-                  (np.array(xm[1])-np.array(xm[0]))*0.97, (np.array(ym[1])-np.array(ym[0]))*0.97,
-                  #x_range=env.s_channels[0].bounds, y_range=env.s_channels[1].bounds,
-                  x_range=x_range, y_range=y_range,
-                  fill_color=color, fill_alpha=0.5,
-                  line_color='#444444', line_alpha=0.0, title=title)
-    plotting.hold(True)
-    plotting.grid().grid_line_color='white'
-    spread(meshgrid.s_channels, s_vectors=s_vectors, s_goals=s_goals, swap_xy=swap_xy,
-           e_radius=e_radius, e_color=e_color, e_alpha=e_alpha,
-           g_radius=g_radius, g_color=g_color, g_alpha=g_alpha)
-    plotting.hold(False)
-
-    plotting.hold(False)
-
-
 def perf_std(ticks, avgs, stds, **kwargs):
     if stds is not None:
         stds = [(s, s) for s in stds]
@@ -521,8 +485,7 @@ def perf_std(ticks, avgs, stds, **kwargs):
 def perf_astd(ticks, avgs, astds, color=BLUE, fig=None, alpha=1.0, sem=1.0,
               plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT, legend=None, **kwargs):
 
-    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
-                      plot_width=plot_width, plot_height=plot_height, **kwargs)
+    fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     fig.legend.orientation = "bottom_right"
     fig.line(ticks, avgs, color=color, line_alpha=alpha, legend=legend)
@@ -547,9 +510,8 @@ def perf_quantiles(results, color=BLUE, fig=None, alpha=1.0, extremes=(0, 100),
     for q in (25, 50, 75) + tuple(extremes):
         quantiles[q] = [np.percentile(avgs, q) for avgs in results['tick_avgs']]
 
+    fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height, **kwargs)
 
-    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
-                  plot_width=plot_width, plot_height=plot_height, **kwargs)
     fig.line(ticks, quantiles[50], color=color, line_alpha=alpha, legend=legend)
 
     xs_patch = list(ticks) + list(reversed(ticks))
@@ -573,8 +535,7 @@ def perf_lines(results, color=BLUE, fig=None, alpha=0.75,
         for line, avg in zip(lines, avgs):
             line.append(avg)
 
-    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
-                      plot_width=plot_width, plot_height=plot_height, **kwargs)
+    fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     for line in results['rep_avgs']:
         fig.line(ticks, line, color=color, line_alpha=alpha, legend=legend)#, line_dash=[3, 3])
