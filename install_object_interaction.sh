@@ -11,8 +11,8 @@ cmds = [ # initializing submodules
 
 # installing submodules
 for pkg in ['scicfg', 'clusterjobs',
-            'environments', 'learners', 'explorers',
-            'experiments']:
+            'environments', 'fastlearners', 'learners', 'explorers',
+            'experiments', 'dovecot']:
 
     cwd = './submodules/{}'.format(pkg)
     #cmd = 'git describe --tags --dirty --always --long'
