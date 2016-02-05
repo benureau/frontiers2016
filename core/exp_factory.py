@@ -89,12 +89,3 @@ def make_exp(env_pairs,
 
 
     return trio_exps
-
-
-def list_exp(exps):
-    exp_cfgs = collections.OrderedDict()
-    for trio_cfgs in exps:
-        for exp_cfg in trio_cfgs:
-            if exp_cfg is not None:
-                exp_cfgs[experiments.expkey(exp_cfg)] = exp_cfg
-    return [exp_cfg for exp_cfg in exp_cfgs.values()]

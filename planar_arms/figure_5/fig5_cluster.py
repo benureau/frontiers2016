@@ -1,4 +1,4 @@
-# Code for generating figures of the the article:
+# Code for generating figures of the article:
 # "Behavioral Diversity Generation in Autonomous Exploration Through Reuse of Past Experience"
 # by Fabien C. Y. Benureau and Pierre-Yves Oudeyer
 # Licensed under the Open Science License (see http://fabien.benureau.com/openscience.html)
@@ -7,7 +7,7 @@ import experiments
 
 import dotdot
 import exp_cfgs
-from exp_factory import make_exp, list_exp
+from exp_factory import make_exp
 
 
 def planar(path='frontiers/planar_arms', rep=100):
@@ -31,4 +31,4 @@ def planar(path='frontiers/planar_arms', rep=100):
 
 
 if __name__ == '__main__':
-    experiments.run_exps(list_exp(planar()))
+    experiments.run_exps(planar())
