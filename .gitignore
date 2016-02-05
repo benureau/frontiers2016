@@ -1,5 +1,6 @@
 external/
 *.ignore/
+*.ignore.*
 htmls/
 .ipynb_checkpoints/
 
