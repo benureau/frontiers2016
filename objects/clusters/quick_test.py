@@ -10,8 +10,8 @@ import exp_cfgs
 from exp_factory import make_exp
 
 def quick_test():
-    nor_diff = {'exp.path'         : 'frontiers2015/test_oi',
-                'exp.prefix'       : ('dov_reuse',),
+    nor_diff = {'exp.path'         : 'test/test',
+                'exp.prefix'       : ('dov_test',),
                 'exp.repetitions'  : 3,
                 'exploration.steps': 150,
                 'meta.run_tests'   : True,
@@ -21,7 +21,7 @@ def quick_test():
     src_diff = nor_diff
     tgt_diff = nor_diff
 
-    return make_exp([('dov_cube45_0.s', 'dov_ball45_0.s')],
+    return make_exp([('dov_cube45_0.k', 'dov_ball45_0.k')],
                      cfg=exp_cfgs.dov_cfg._deepcopy(),
                      nor_diff=nor_diff, src_diff=src_diff, tgt_diff=tgt_diff,
                      src_ex_names=('rmb100.rgb.p0.05',),
