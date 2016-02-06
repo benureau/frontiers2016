@@ -116,7 +116,7 @@ def show(figs):
         if isinstance(figs[0], collections.Iterable):
             bokeh.io.show(bokeh.io.gridplot(figs))
         else:
-            bokeh.io.show(bokeh.io.gridplot([figs])) 
+            bokeh.io.show(bokeh.io.gridplot([figs]))
     else:
         bokeh.io.show(figs)
 
@@ -132,7 +132,7 @@ def vplot(figs):
 
     ## figure defaults
 
-def prepare_fig(fig, grid=False, tight=True, **kwargs):
+def prepare_fig(fig, grid=False, tight=True, clean=True, **kwargs):
     if fig is None:
         if 'tools' not in kwargs:
             kwargs['tools'] = TOOLS
@@ -140,8 +140,9 @@ def prepare_fig(fig, grid=False, tight=True, **kwargs):
             kwargs['title_text_font_size'] = value('6pt')
 
         fig = plotting.figure(**kwargs)
-        three_ticks(fig)
-        disable_minor_ticks(fig)
+        if clean:
+            three_ticks(fig)
+            disable_minor_ticks(fig)
         if tight:
             tight_layout(fig)
         if not grid:
@@ -509,7 +510,8 @@ def perf_quantiles(results, color=BLUE, fig=None, alpha=1.0, extremes=(0, 100),
     for q in (25, 50, 75) + tuple(extremes):
         quantiles[q] = [np.percentile(avgs, q) for avgs in results['tick_avgs']]
 
-    fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height, **kwargs)
+    fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height,
+                      clean=False, tight=False, **kwargs)
 
     fig.line(ticks, quantiles[50], color=color, line_alpha=alpha, legend=legend)
 
