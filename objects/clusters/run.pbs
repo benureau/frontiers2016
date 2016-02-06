@@ -4,7 +4,7 @@
 #PBS -l pmem=4gb
 #PBS -q inria
 
-#PBS -e /$configfile.err
-#PBS -o /$configfile.out
+#PBS -e $configfile.err
+#PBS -o $configfile.out
 
 python -c "import experiments; experiments.run_job()" $configfile
