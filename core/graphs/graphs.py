@@ -116,8 +116,7 @@ def show(figs):
         if isinstance(figs[0], collections.Iterable):
             bokeh.io.show(bokeh.io.gridplot(figs))
         else:
-            assert False, "Simple list of figures are not supported"
-            bokeh.io.show(bokeh.io.hplot(*figs)) # should, but does not work.
+            bokeh.io.show(bokeh.io.gridplot([figs])) 
     else:
         bokeh.io.show(figs)
 
