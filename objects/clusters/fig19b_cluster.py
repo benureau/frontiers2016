@@ -7,7 +7,10 @@ import experiments
 
 from fig19_clusters import rgap
 
+def rgap_h():
+    return rgap(rep=4, src_env='dov_ball45_0.kb',
+                       tgt_env='dov_ball45_0.s')
+
 
 if __name__ == '__main__':
-    experiments.run_exps(rgap(rep=4, src_env='dov_ball45_0.kb',
-                                     tgt_env='dov_ball45_0.s'))
+    experiments.run_exps(rgap_h())
