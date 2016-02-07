@@ -348,7 +348,7 @@ def spread(s_channels, s_vectors=(), s_goals=(), fig=None,
     return fig
 
 
-def coverage(s_channels, threshold, s_vectors=(), fig=None,
+def coverage(s_channels, threshold, s_vectors=(), fig=None, plot_height=PLOT_SIZE, plot_width=PLOT_SIZE,
              title='no title', swap_xy=True, x_range=None, y_range=None, grid=False,
              color=C_COLOR, c_alpha=1.0, alpha=0.5, **kwargs):
 
@@ -361,7 +361,7 @@ def coverage(s_channels, threshold, s_vectors=(), fig=None,
         x_range, y_range = y_range, x_range
         xv, yv = yv, xv
 
-    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=TOOLS,
                       plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     fig.circle(xv, yv, radius=threshold,
