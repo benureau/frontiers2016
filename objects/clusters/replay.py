@@ -49,6 +49,13 @@ def dovecot_replay(exp_cfg, rep=0, exp_cfgs=(), collision_only=True, headless=Fa
         inp = raw_input()
         if inp == '':
             step += 1
+            while collision_only:
+                expl, fback = job_data['explorations'][step]
+                s_vector = environments.tools.to_vector(fback['s_signal'], job_data.s_channels)
+                if s_vector[1] == 0.0:
+                    step += 1
+                else:
+                    break
         elif inp == '=':
             step += 0 # no change
         else:
@@ -70,6 +77,6 @@ if __name__ == '__main__':
     env_name = 'dov_ball45_0.s'
     env_name = 'dov_cube45_0.s'
 
-    from fig12_cluster import rmb_reuse
-    exp_cfgs = rmb_reuse(path='frontiers2016/objects/reuse', rep=25)
-    dovecot_replay(exp_cfgs[0][2], rep=3, exp_cfgs=exp_cfgs, collision_only=True, headless=False)
+    from fig15_cluster import pool
+    exp_cfgs = pool()
+    dovecot_replay(exp_cfgs[0][2], rep=14, exp_cfgs=exp_cfgs, collision_only=True, headless=False)
