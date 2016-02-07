@@ -132,7 +132,7 @@ def vplot(figs):
 
     ## figure defaults
 
-def prepare_fig(fig, grid=False, tight=True, clean=True, **kwargs):
+def prepare_fig(fig, grid=False, tight=True, minimalist=True, **kwargs):
     if fig is None:
         if 'tools' not in kwargs:
             kwargs['tools'] = TOOLS
@@ -140,7 +140,7 @@ def prepare_fig(fig, grid=False, tight=True, clean=True, **kwargs):
             kwargs['title_text_font_size'] = value('6pt')
 
         fig = plotting.figure(**kwargs)
-        if clean:
+        if minimalist:
             three_ticks(fig)
             disable_minor_ticks(fig)
         if tight:
@@ -520,7 +520,7 @@ def perf_quantiles(results, color=BLUE, fig=None, alpha=1.0, extremes=(0, 100),
         quantiles[q] = [np.percentile(avgs, q) for avgs in results['tick_avgs']]
 
     fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height,
-                      clean=False, tight=False, **kwargs)
+                      minimalist=False, tight=False, **kwargs)
 
     fig.line(ticks, quantiles[50], color=color, line_alpha=alpha, legend=legend)
 
