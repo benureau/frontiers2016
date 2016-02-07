@@ -56,11 +56,14 @@ for d in [0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75
 
     # Explorers #
 
-# Random Motor
+
+# Random Motor Strategies
 
 rm_expl = explorers.RandomMotorExplorer.defcfg._deepcopy()
 catalog['random.motor'] = rm_expl
 
+
+# Random Goal Strategies
 
 base_ex              = explorers.MetaExplorer.defcfg._deepcopy()
 base_ex.eras         = (10, None)
@@ -98,31 +101,8 @@ catalog['random.goal'] = catalog['rmb10.rgb.p0.05']
 for mb in [1, 10, 20, 25, 50, 100, 200, 250, 300, 400, 500, 1000, 4000, 4500, 4750, 4900, 24000, 24500, 49000]:
     catalog['random.goal_{}'.format(mb)] = catalog['rmb{}.rgb.p0.05'.format(mb)]
 
-# Reuse Goals
 
-def reuse_explorer(mb, p_reuse, m_disturb, res, algorithm='sensor_uniform'):
-    assert 0 <= p_reuse <= 1
-
-    reuse_ex          = explorers.MetaExplorer.defcfg._deepcopy()
-    reuse_ex.eras     = (mb, None)
-    reuse_ex.weights  = ((p_reuse, 1-p_reuse, 0.0), (0.0, 0.0, 1.0))
-
-    reuse_ex.ex_0     = explorers.ReuseExplorer.defcfg._deepcopy()
-    reuse_ex.ex_0.reuse.res = res
-    reuse_ex.ex_0.reuse.algorithm = algorithm
-
-    reuse_ex.ex_1     = explorers.RandomMotorExplorer.defcfg._deepcopy()
-
-    reuse_ex.ex_2                   = explorers.RandomGoalExplorer.defcfg._deepcopy()
-    reuse_ex.ex_2.res               = res
-    reuse_ex.ex_2.learner           = learn_cfg
-    reuse_ex.ex_2.learner.m_disturb = m_disturb
-
-    algsrc = ''
-    if algorithm != 'sensor_uniform':
-        algsrc = '.' + algorithm
-    return 'reuse{}_{}_{}_{}_{}'.format(algsrc, mb, p_reuse, m_disturb, res), reuse_ex
-
+# Reuse Strategies
 
 def reuse_ex(mb, p_reuse, algorithm='sensor_uniform', res=20, lrn_name='p0.05'):
     assert 0 <= p_reuse <= 1
@@ -141,7 +121,7 @@ def reuse_ex(mb, p_reuse, algorithm='sensor_uniform', res=20, lrn_name='p0.05'):
     r_ex.ex_2.reuse.res         = res
     r_ex.ex_2.reuse.algorithm   = algorithm
 
-    alg_str = '' if algorithm != 'sensor_uniform' else '.' + algorithm
+    alg_str = '' if algorithm == 'sensor_uniform' else '.' + algorithm
     return 'reuse{}_{}_{}_{}_{}'.format(alg_str, mb, p_reuse, res, lrn_name), r_ex
 
 # 'reuse_200_0.5_20_p0.05'
@@ -152,6 +132,7 @@ for mb in [1, 10, 25, 50, 100, 200, 300, 500]:
                 for lrn_name in ['p0.05', 'p0.025', 'lwlr']:
                     reuse_name, reuse_cfg = reuse_ex(mb, p_reuse, algorithm, res, lrn_name)
                     catalog[reuse_name] = reuse_cfg
+
 
 # Old hardware experiments
 
