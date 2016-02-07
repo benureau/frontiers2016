@@ -158,9 +158,18 @@ def tight_layout(fig):
 
 def three_ticks(fig):
     x_min, x_max = fig.x_range.start, fig.x_range.end
-    y_min, y_max = fig.x_range.start, fig.x_range.end
-    fig.xaxis[0].ticker=FixedTicker(ticks=[x_min, (x_min + x_max)/2.0, x_max])
-    fig.yaxis[0].ticker=FixedTicker(ticks=[y_min, (y_min + y_max)/2.0, y_max])
+    y_min, y_max = fig.y_range.start, fig.y_range.end
+    x_ticks = [x_min, (x_min + x_max)/2.0, x_max]
+    if x_min < 0 < x_max and 0.0 not in x_ticks:
+        x_ticks.append(0)
+        x_ticks.sort()
+    y_ticks = [y_min, (y_min + y_max)/2.0, y_max]
+    if y_min < 0 < y_max and 0.0 not in y_ticks:
+        y_ticks.append(0)
+        y_ticks.sort()
+
+    fig.xaxis[0].ticker=FixedTicker(ticks=x_ticks)
+    fig.yaxis[0].ticker=FixedTicker(ticks=y_ticks)
 
 def disable_minor_ticks(fig):
     fig.axis.major_label_text_font_size = value('8pt')
