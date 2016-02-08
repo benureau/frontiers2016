@@ -221,7 +221,7 @@ pool_cfg = push_cfg._deepcopy()
 
 pool_cfg.execute.scene.arena.name  = 'arena20x20x10'
 pool_cfg.execute.scene.arena.pos   = (400.0, 600.0, None)
-pool_cfg.mprims.sim_end            = 1500
+pool_cfg.mprims.sim_end            = 1000
 
 pool_cfg.execute.prefilter = False
 pool_cfg.execute.scene.objects.ball         = obj0._deepcopy()
@@ -233,26 +233,3 @@ pool_cfg.execute.scene.objects.blueball.pos     = ( -60.0, 0.0, None)
 pool_cfg.execute.scene.objects.blueball.tracked = False
 pool_cfg.execute.scene.objects.blueball.mass    = 0.050
 add(pool_cfg, 'dov_pool')
-
-
-# # pool config
-# pool_cfg = push_cfg._deepcopy()
-# pool_cfg.execute.scene.arena.name  = 'arena20x20x10'
-# pool_cfg.execute.scene.arena.pos   = (400.0, 600.0, None)
-# pool_cfg.mprims.sim_end            = 1000
-# pool_cfg.execute.prefilter = False
-# pool_cfg.execute.scene.objects.ball45         = obj0._deepcopy()
-# pool_cfg.execute.scene.objects.ball45.tracked = True
-# pool_cfg.execute.scene.objects.ball45.pos     = (180.0, 350.0, None)
-# pool_cfg.execute.scene.objects.ball45.mass    = 0.0025
-# pool_cfg.execute.scene.objects.ball45_2         = obj0._deepcopy()
-# pool_cfg.execute.scene.objects.ball45_2.pos     = ( -60.0, 0.0, None)
-# pool_cfg.execute.scene.objects.ball45_2.tracked = False
-# pool_cfg.execute.scene.objects.ball45_2.mass    = 0.050
-# add(pool_cfg, 'dov_pool')
-
-# # pool 1500 config
-# pool_1500_cfg = pool_cfg._deepcopy()
-# pool_1500_cfg.mprims.sim_end            = 1500
-# pool_1500_cfg.execute.scene.objects.ball45.mass    = 0.010
-# add(pool_1500_cfg, 'dov_pool_1500')
