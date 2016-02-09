@@ -10,7 +10,7 @@ import exp_cfgs
 from exp_factory import make_exp
 
 
-def dissimilar(path='frontiers2016/objects/reuse', rep=25):
+def dissimilar(path='frontiers2016/objects/reuse', rep=100):
     nor_diff = {'exp.path'         : path,
                 'exp.prefix'       : ('dov_reuse',),
                 'exp.repetitions'  : rep,
