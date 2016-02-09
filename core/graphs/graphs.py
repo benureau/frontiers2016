@@ -358,7 +358,7 @@ def spread(s_channels, s_vectors=(), s_goals=(), fig=None,
 
 
 def coverage(s_channels, threshold, s_vectors=(), fig=None, plot_height=PLOT_SIZE, plot_width=PLOT_SIZE,
-             title='no title', swap_xy=True, x_range=None, y_range=None, grid=False,
+             title='no title', swap_xy=True, x_range=None, y_range=None,
              color=C_COLOR, c_alpha=1.0, alpha=0.5, **kwargs):
 
     x_range, y_range = ranges(s_channels, x_range=x_range, y_range=y_range)
@@ -390,7 +390,6 @@ def coverage(s_channels, threshold, s_vectors=(), fig=None, plot_height=PLOT_SIZ
                 x, y = y, x
             fig.patch(x, y, fill_color=None, line_color=hexa(color, 0.75))
 
-    disable_minor_ticks(fig)
     return fig
 
 
@@ -495,8 +494,8 @@ def perf_astd(ticks, avgs, astds, color=BLUE, fig=None, alpha=1.0, sem=1.0,
               plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT, legend=None, **kwargs):
 
     fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height, **kwargs)
-
     fig.legend.orientation = "bottom_right"
+
     fig.line(ticks, avgs, color=color, line_alpha=alpha, legend=legend)
 
     if astds is not None:
@@ -504,41 +503,42 @@ def perf_astd(ticks, avgs, astds, color=BLUE, fig=None, alpha=1.0, sem=1.0,
         y_std = (             [a - s_min/math.sqrt(sem) for a, (s_min, s_max) in zip(avgs, astds)] +
                 list(reversed([a + s_max/math.sqrt(sem) for a, (s_min, s_max) in zip(avgs, astds)])))
         fig.patch(x_std, y_std, fill_color=color, fill_alpha=alpha*0.25, line_color=None)
-    fig.grid.grid_line_color=None
-    #fig.grid().grid_line_color = 'white'
-    #plotting_axis(fig)
 
     return fig
-    #plotting.hold(False)
 
 
-def perf_quantiles(results, color=BLUE, fig=None, alpha=1.0, extremes=(0, 100),
-                   plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT, legend=None, max_line=True, **kwargs):
-    ticks = results['ticks']
-    quantiles = {}
-    for q in (25, 50, 75) + tuple(extremes):
-        quantiles[q] = [np.percentile(avgs, q) for avgs in results['tick_avgs']]
-
+def perf_quantiles(results, fig=None, legend=None, dashed_quant=(0, 100),
+                   plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT,
+                   color=BLUE, alpha=1.0, **kwargs):
+    """
+    :param dashed_quant:  the quantiles to display as dashed lines.
+    """
     fig = prepare_fig(fig, plot_width=plot_width, plot_height=plot_height,
                       minimalist=False, tight=False, **kwargs)
+    fig.legend.orientation = "bottom_right"
 
+    ticks = results['ticks']
+    quantiles = {}
+    for q in (25, 50, 75) + tuple(dashed_quant):
+        quantiles[q] = [np.percentile(avgs, q) for avgs in results['tick_avgs']]
+
+    # 50th quantile
     fig.line(ticks, quantiles[50], color=color, line_alpha=alpha, legend=legend)
 
+    # 25th, 75th quantiles
     xs_patch = list(ticks) + list(reversed(ticks))
     ys_patch = (quantiles[25] + list(reversed(quantiles[75])))
     fig.patch(xs_patch, ys_patch, fill_color=color, fill_alpha=alpha*0.25, line_color=None)
 
-    for q in extremes:
+    # dashed quantiles
+    for q in dashed_quant:
         fig.line(ticks, quantiles[q],   color=color, line_alpha=alpha, line_dash=[3, 3])
-#    fig.line(ticks, quantiles[100], color=color, line_alpha=alpha, line_dash=[3, 3])
-
-    fig.grid.grid_line_color=None
-    fig.legend.orientation = "bottom_right"
 
     return fig
 
-def perf_lines(results, color=BLUE, fig=None, alpha=0.75,
-               plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT, legend=None, max_line=True, **kwargs):
+
+def perf_lines(results, fig=None, legend=None, color=BLUE, alpha=0.75,
+               plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT, **kwargs):
     ticks = results['ticks']
     lines = [[] for _ in results['tick_avgs'][0]]
     for avgs in results['tick_avgs']:
