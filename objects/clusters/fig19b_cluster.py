@@ -5,12 +5,17 @@
 
 import experiments
 
-from fig19_clusters import rgap
+from fig19a_cluster import rgap
 
 def rgap_h():
-    return rgap(rep=4, src_env='dov_ball45_0.kb',
-                       tgt_env='dov_ball45_0.s')
+    return rgap(src_env='dov_ball45_0.k', tgt_env='dov_ball45_0.h',
+                path='frontiers2016/objects/rgap_hard', rep=4,
+                nor_ex_name='rmb300.rgb.mesh25.p0.07.h',
+                tgt_ex_name='reuse_300_0.5_25_rgb.mesh25.p0.07.h')
 
 
 if __name__ == '__main__':
     experiments.run_exps(rgap_h())
+
+# 'rmb300.rgb.mesh25.p0.07.h'
+# 'reuse_300_0.5_25_rgb.mesh25.p0.07.h'

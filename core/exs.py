@@ -40,7 +40,7 @@ gauss_cfg.operator.d        = 0.05
 lrn_catalog = {'p0.05': learn_cfg, '2p0.05': learn2_cfg,
                'lwlr': lwlr_cfg, 'plwlr': plwlr_cfg, 'gauss': gauss_cfg}
 
-for d in [0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0]:
+for d in [0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.07, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0]:
     lrn_cfg = learn_cfg._deepcopy()
     lrn_cfg.operator.d = d
     lrn_catalog['p{}'.format(d)] = lrn_cfg._deepcopy()
@@ -143,3 +143,41 @@ catalog['rmb300.rgb.lwlr.h'] = hard_src_ex
 hard_tgt_ex = catalog['reuse_300_0.5_40_lwlr']._deepcopy()
 hard_tgt_ex.weights = ((0.5, 0.0, 0.5), (0.05, 0.9, 0.05))
 catalog['reuse_300_0.5_40_lwlr.h'] = hard_tgt_ex
+
+
+# Old reality gap hardware experiments
+
+rgap_src_ex          = explorers.MetaExplorer.defcfg._deepcopy()
+rgap_src_ex.eras     = (300, None)
+rgap_src_ex.weights  = ((1.0, 0.0, 0.0), (0.1, 0.18000000000000002, 0.7200000000000001))
+
+rgap_src_ex.ex_0                   = explorers.RandomMotorExplorer.defcfg._deepcopy()
+
+rgap_src_ex.ex_1                   = explorers.RandomGoalExplorer.defcfg._deepcopy()
+rgap_src_ex.ex_1.learner           = lrn_catalog['p0.07']._deepcopy()
+
+rgap_src_ex.ex_2                   = explorers.MeshgridGoalExplorer.defcfg._deepcopy()
+rgap_src_ex.ex_2.res               = 25
+rgap_src_ex.ex_2.learner           = lrn_catalog['p0.07']._deepcopy()
+
+catalog['rmb300.rgb.mesh25.p0.07.h'] = rgap_src_ex
+
+
+rgap_tgt_ex          = explorers.MetaExplorer.defcfg._deepcopy()
+rgap_tgt_ex.eras     = (300, None)
+rgap_tgt_ex.weights  = ((0.5, 0.5, 0.0, 0.0), (0.05, 0.05, 0.18000000000000002, 0.7200000000000001))
+
+rgap_tgt_ex.ex_0                   = explorers.RandomMotorExplorer.defcfg._deepcopy()
+
+rgap_tgt_ex.ex_1                   = explorers.ReuseExplorer.defcfg._deepcopy()
+rgap_tgt_ex.ex_1.reuse.algorithm   = 'sensor_uniform'
+rgap_tgt_ex.ex_1.reuse.res         = 25
+
+rgap_tgt_ex.ex_2                   = explorers.RandomGoalExplorer.defcfg._deepcopy()
+rgap_tgt_ex.ex_2.learner           = lrn_catalog['p0.07']._deepcopy()
+
+rgap_tgt_ex.ex_3                   = explorers.MeshgridGoalExplorer.defcfg._deepcopy()
+rgap_tgt_ex.ex_3.res               = 25
+rgap_tgt_ex.ex_3.learner           = lrn_catalog['p0.07']._deepcopy()
+
+catalog['reuse_300_0.5_25_rgb.mesh25.p0.07.h'] = rgap_src_ex
