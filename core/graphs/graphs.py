@@ -46,7 +46,7 @@ RANDREUSE_COLOR = '#408000' # green
 E_COLOR = '#2779B3' # blue
 G_COLOR = '#FF030D' # red
 
-TOOLS = "pan,reset,save"
+TOOLS = "pan,box_zoom,reset,save"
 
 
 white   = (255, 255, 255)
@@ -132,7 +132,8 @@ def vplot(figs):
 
     ## figure defaults
 
-def prepare_fig(fig, grid=False, tight=True, minimalist=True, **kwargs):
+def prepare_fig(fig, grid=False, tight=True, minimalist=True,
+                xgridlines=None, ygridlines=None, **kwargs):
     if fig is None:
         if 'tools' not in kwargs:
             kwargs['tools'] = TOOLS
@@ -147,6 +148,11 @@ def prepare_fig(fig, grid=False, tight=True, minimalist=True, **kwargs):
             tight_layout(fig)
         if not grid:
             disable_grid(fig)
+        else:
+            if xgridlines is not None:
+                fig.xgrid.ticker=FixedTicker(ticks=xgridlines)
+            if ygridlines is not None:
+                fig.ygrid.ticker=FixedTicker(ticks=ygridlines)
 
     return fig
 
@@ -357,7 +363,8 @@ def spread(s_channels, s_vectors=(), s_goals=(), fig=None,
     return fig
 
 
-def coverage(s_channels, threshold, s_vectors=(), fig=None, plot_height=PLOT_SIZE, plot_width=PLOT_SIZE,
+def coverage(s_channels, threshold, s_vectors=(), fig=None,
+             plot_height=PLOT_SIZE, plot_width=PLOT_SIZE,
              title='no title', swap_xy=True, x_range=None, y_range=None,
              color=C_COLOR, c_alpha=1.0, alpha=0.5, **kwargs):
 
@@ -370,7 +377,7 @@ def coverage(s_channels, threshold, s_vectors=(), fig=None, plot_height=PLOT_SIZ
         x_range, y_range = y_range, x_range
         xv, yv = yv, xv
 
-    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=TOOLS,
+    fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=TOOLS, title=title,
                       plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     fig.circle(xv, yv, radius=threshold,
