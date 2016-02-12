@@ -20,7 +20,7 @@ def planar(path='frontiers2016/planar_arms', rep=100):
     src_diff = nor_diff
     tgt_diff = nor_diff
 
-    return make_exp([('kin20_150', 'kin20_150_0.9')],
+    return make_exp([('kin20_150', 'kin20_150_p_0.9')],
                     cfg=exp_cfgs.planar_cfg._deepcopy(),
                     nor_diff=nor_diff, src_diff=src_diff, tgt_diff=tgt_diff,
                     src_ex_names=('rmb50.rgb.p0.05',),

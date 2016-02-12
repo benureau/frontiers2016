@@ -21,7 +21,8 @@ try:
 except ImportError:
     pass
 
-from environments import tools
+from environments import tools as env_tools
+from environments import Channel
 
 import factored
 
@@ -192,17 +193,20 @@ def disable_grid(fig):
     ## displaying kinematic 2D arm postures
 
 def posture_vectors(env, m_vectors, **kwargs):
-    m_signals = [tools.to_signal(m_vector, env.m_channels) for m_vector in m_vectors]
+    m_signals = [env_tools.to_signal(m_vector, env.m_channels) for m_vector in m_vectors]
     return posture_signals(env, m_signals, **kwargs)
 
 def posture_extrema(env, explorations, thetas=tuple(i*math.pi/4 for i in range(8)), **kwargs):
-    s_vectors = [tools.to_vector(e[1]['s_signal'], env.s_channels) for e in explorations]
+    s_vectors = [env_tools.to_vector(e[1]['s_signal'], env.s_channels) for e in explorations]
+    if 'theta' in [c.name for c in env.s_channels]:
+        s_vectors, s_channels = depolarize(s_vectors, env.s_channels)
+
     idxs = factored.spread_extrema(s_vectors, dirs=thetas)
     m_signals = [explorations[idx][0]['m_signal'] for idx in idxs]
     return posture_signals(env, m_signals, **kwargs)
 
 def posture_quadrans(env, explorations, **kwargs):
-    s_vectors = [tools.to_vector(e[1]['s_signal'], env.s_channels) for e in explorations]
+    s_vectors = [env_tools.to_vector(e[1]['s_signal'], env.s_channels) for e in explorations]
     pp, pn, nn, np = [], [], [], []
     for idx, (x, y) in enumerate(s_vectors):
         if x < 0:
@@ -234,7 +238,7 @@ def choose_m_vectors(m_channels, explorations, n=5):
     m_vectors = []
     for _ in range(n):
         explo = random.choice(explorations)
-        m_vector = tools.to_vector(explo[0]['m_signal'], m_channels)
+        m_vector = env_tools.to_vector(explo[0]['m_signal'], m_channels)
         m_vectors.append(m_vector)
 
     return m_vectors
@@ -257,7 +261,7 @@ def posture_signals(kin_env, m_signals, fig=None, plot_height=PLOT_SIZE, plot_wi
                       plot_width=plot_width, plot_height=plot_height, **kwargs)
 
     for m_signal in m_signals:
-        m_vector = kin_env.flatten_synergies(m_signal)
+        m_vector = env_tools.to_vector(m_signal, kin_env.m_channels)
         posture(kin_env, m_vector, fig=fig, swap_xy=swap_xy, x_T=x_T, y_T=y_T,
                 color=color, alpha=alpha, radius_factor=radius_factor, line_factor=line_factor)
 
@@ -298,15 +302,13 @@ def posture(kin_env, m_vector, fig=None, swap_xy=True, x_T=0.0, y_T=0.0,
                    'fill_alpha'  : alpha,
                   })
 
-    s_signal = kin_env._multiarm.forward_kin(m_vector)
+    s_signal = kin_env.execute(env_tools.to_signal(m_vector, kin_env.m_channels))
 
-    xs, ys = [0.0], [0.0]
-    for i in range(kin_env.cfg.dim):
-        xs.append(s_signal['x{}'.format(i+1)])
-        ys.append(s_signal['y{}'.format(i+1)])
-
+    xs, ys = zip(*kin_env.posture)
     if swap_xy:
         ys, xs = xs, ys
+
+
 
     xs, ys = np.array(xs), np.array(ys)
     fig.line(xs+x_T, ys+y_T, line_width=line_factor*radius_factor, line_color=color, line_alpha=alpha)
@@ -326,12 +328,30 @@ def line(x_range, avg, std, color='#E84A5F', dashes=(4, 2), alpha=1.0):
                   fill_color=color, line_color=None, fill_alpha=0.1*alpha)
     plotting.hold(False)
 
+def depolarize(s_vectors, s_channels):
+    euclidean_channels = (Channel('x', bounds=(-1.0, 1.0)),
+                          Channel('y', bounds=(-1.0, 1.0)))
+    euclidean_vectors = []
+    r_min, r_max = s_channels[0].bounds
+    assert r_min == 0
+    s_min, s_max = s_channels[1].bounds
+    for r, theta in [s[:2] for s in s_vectors]:
+        x, y = r*math.cos(theta), r*math.sin(theta)
+        euclidean_vectors.append((x, y))
+    return euclidean_vectors, euclidean_channels
+
 def spread(s_channels, s_vectors=(), s_goals=(), fig=None,
            title='no title', plot_height=PLOT_SIZE, plot_width=PLOT_SIZE, tools=TOOLS,
            swap_xy=True, x_range=None, y_range=None,
            e_radius=1.0, e_color=E_COLOR, e_alpha=0.75,
            g_radius=1.0, g_color=G_COLOR, g_alpha=0.75,
            grid=False, radius_units='screen', font_size='11pt', **kwargs):
+    """
+    :param polar:  if True, assumes the vectors are uniformized polar coordinates,
+                   and convert them to euclidean ones.
+    """
+    if 'theta' in [c.name for c in s_channels]:
+        s_vectors, s_channels = depolarize(s_vectors, s_channels)
 
     x_range, y_range = ranges(s_channels, x_range=x_range, y_range=y_range)
     fig = prepare_fig(fig, x_range=x_range, y_range=y_range, tools=tools,
@@ -367,6 +387,8 @@ def coverage(s_channels, threshold, s_vectors=(), fig=None,
              plot_height=PLOT_SIZE, plot_width=PLOT_SIZE,
              title='no title', swap_xy=True, x_range=None, y_range=None,
              color=C_COLOR, c_alpha=1.0, alpha=0.5, **kwargs):
+    if 'theta' in [c.name for c in s_channels]:
+        s_vectors, s_channels = depolarize(s_vectors, s_channels)
 
     x_range, y_range = ranges(s_channels, x_range=x_range, y_range=y_range)
     try:
