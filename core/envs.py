@@ -34,7 +34,8 @@ for dim in [2, 3, 5, 7, 8, 9, 10, 15, 20, 30, 40, 50, 60, 80, 100]:
     env_name, env_cfg = kin(dim=dim, limit=150)
     catalog[env_name] = env_cfg
 
-    env_name, env9_cfg = kin(dim=dim, limit=150, polar=True)
-    env9_cfg.lengths = [0.9**i for i in range(env9_cfg.dim)]
-    env9_cfg.lengths = [s/sum(env9_cfg.lengths) for s in env9_cfg.lengths]
-    catalog[env_name + '_0.9'] = env9_cfg
+    for polar in [True, False]:
+        env_name, env9_cfg = kin(dim=dim, limit=150, polar=polar)
+        env9_cfg.lengths = [0.9**i for i in range(env9_cfg.dim)]
+        env9_cfg.lengths = [s/sum(env9_cfg.lengths) for s in env9_cfg.lengths]
+        catalog[env_name + '_0.9'] = env9_cfg

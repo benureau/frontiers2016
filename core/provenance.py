@@ -1,6 +1,8 @@
 import os
 
+import experiments.execute
 from experiments import provenance as prv
+from clusterjobs import jobgroup, context
 
 
 GIT_DIR = os.path.abspath(os.path.join(__file__, '../..'))
@@ -46,13 +48,27 @@ def objects():
                               GIT_DIR, OI_RESEARCH_PKGS,
                               OI_THIRDPARTY_PY, OI_THIRDPARTY)
 
+def cluster(expcfgs):
+    prov_acc = prv.ProvenanceAccumulator(code_dir=GIT_DIR)
+
+    expcfgs = experiments.execute.flatten_exps(expcfgs)
+    jobgrp = jobgroup.JobBatch(context.Env(user=None))
+
+    for expcfg in expcfgs:
+        for i in range(expcfg.exp.repetitions):
+            data = experiments.load_exploration(expcfg, rep=i, jobgrp=jobgrp, verbose=False)
+            prov_cfg = data.meta['jobcfg'].provenance.data
+            prov_acc.add_cfg(prov_cfg._deepcopy())
+    return prov_acc
 
 if __name__ == '__main__':
     prov_data = objects()
-
     print(prov_data.message())
-    print(prov_data.cfg())
-    prov_desc = prov_data.desc()
-    prov_data2 = prv.ProvenanceData.from_desc(prov_desc)
 
-    assert prov_data.same_cfg(prov_data2.cfg())
+    # prov_desc = prov_data.desc()
+    # prov_data2 = prv.ProvenanceData.from_desc(prov_desc)
+    #
+    # assert prov_data.same_cfg(prov_data2.cfg())
+    #
+    # prov_acc = prv.ProvenanceAccumulator()
+    # prov_acc.add_cfg(prov_data.cfg())
