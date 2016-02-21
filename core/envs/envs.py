@@ -1,13 +1,9 @@
 import environments.envs
+import envs_dov # objects environments
 
 
 catalog = {}
-
-try:
-    import envs_dov # dovecot
-    catalog.update(envs_dov.catalog)
-except (ImportError, DeprecationWarning):
-    pass
+catalog.update(envs_dov.catalog)
 
 
 def kin(dim=20, limit=150, lengths=None, polar=False):

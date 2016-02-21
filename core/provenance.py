@@ -38,15 +38,17 @@ OI_THIRDPARTY    = (PA_THIRDPARTY +
 
 
 
-def planar_arms():
+def planar_arms(populate=True):
     return prv.ProvenanceData('frontiers2016',
                               GIT_DIR, PA_RESEARCH_PKGS,
-                              PA_THIRDPARTY_PY, PA_THIRDPARTY)
+                              PA_THIRDPARTY_PY, PA_THIRDPARTY,
+                              populate=populate)
 
-def objects():
+def objects(populate=True):
     return prv.ProvenanceData('frontiers2016',
                               GIT_DIR, OI_RESEARCH_PKGS,
-                              OI_THIRDPARTY_PY, OI_THIRDPARTY)
+                              OI_THIRDPARTY_PY, OI_THIRDPARTY,
+                              populate=populate)
 
 def cluster(expcfgs):
     prov_acc = prv.ProvenanceAccumulator(code_dir=GIT_DIR)

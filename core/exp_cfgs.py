@@ -27,7 +27,7 @@ planar_cfg = base_cfg._deepcopy()
 
 planar_cfg.meta.run_tests = True
 
-planar_cfg.provenance.desc = provenance.planar_arms().desc()
+planar_cfg.provenance.desc = provenance.planar_arms(populate=False).desc()
 
 planar_cfg.exploration.steps = 5000
 planar_cfg.exploration.deps     = ()
@@ -43,7 +43,7 @@ planar_cfg.tests.tcov.buffer_size = 0.05
 
 dov_cfg = base_cfg._deepcopy()
 
-dov_cfg.provenance.desc = provenance.objects().desc()
+dov_cfg.provenance.desc = provenance.objects(populate=False).desc()
 
 dov_cfg.exploration.steps = 1000
 dov_cfg.exploration.deps  = ()

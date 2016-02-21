@@ -1,7 +1,11 @@
 import platform
 
-from dovecot import desc
-from dovecot import objdesc
+try:
+    from dovecot import desc
+    from dovecot import objdesc
+except ImportError:
+    from .dovecot_static import desc
+    from .dovecot_static import objdesc
 
 
 def_cfg = desc._deepcopy()
