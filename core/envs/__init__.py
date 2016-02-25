@@ -1,1 +1,1 @@
-from .envs import catalog
+from .envs import catalog, kin
